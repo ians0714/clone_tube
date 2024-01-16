@@ -8,7 +8,7 @@
     "url": "git+https://github.com/ians0714/clone_tube.git"
   },
   "scripts": {
-    "dev": "nodemon --exec babel-node index.js"
+    "dev": "nodemon --exec babel-node src/server.js"
   },
   "author": "ians0714",
   "license": "ISC",
@@ -17,7 +17,8 @@
   },
   "homepage": "https://github.com/ians0714/clone_tube#readme",
   "dependencies": {
-    "express": "^4.18.2"
+    "express": "^4.18.2",
+    "morgan": "^1.10.0"
   },
   "devDependencies": {
     "@babel/core": "^7.23.7",
