@@ -2,8 +2,7 @@ extends base
 include mixins/video
 
 block content
-    h2 Welcome!
-    each info in videos
-        +video(info)
+    each video in videos
+        +video(video)
     else 
         li Sorry
