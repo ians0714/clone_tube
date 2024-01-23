@@ -1,10 +1,8 @@
 import Video from "../models/Video";
 
-//Video.find({}, (error, videos) => {});
-
 export const home = async (req, res) => {
   try {
-    const videos = await Video.find({});
+    const videos = await Video.find({}).sort({ createdAt: "desc" });
     return res.render("home", { pageTitle: "Home", videos });
   } catch {
     res.render("Server Error");
@@ -64,6 +62,21 @@ export const postUpload = async (req, res) => {
     });
   }
 };
-export const search = (req, res) => res.send("Videos");
-export const deleteVideo = (req, res) => res.send("Delete Video");
+export const search = async (req, res) => {
+  const { keyword } = req.query;
+  let videos = [];
+  if (keyword) {
+    videos = await Video.find({ title: { $regex: new RegExp(keyword, "i") } });
+  }
+  return res.render("search", { pageTitle: "Search", videos });
+};
+export const deleteVideo = async (req, res) => {
+  const { id } = req.params;
+  try {
+    await Video.findByIdAndDelete(id);
+    return res.redirect("/");
+  } catch (error) {
+    return res.render("404", { pageTitle: "Video can't delete" });
+  }
+};
 export const upload = (req, res) => res.send("Upload Video");
