@@ -58,7 +58,7 @@ export const postLogin = async (req, res) => {
     });
   }
   req.session.loggedIn = true;
-  res.session.user = user;
+  req.session.user = user;
   return res.redirect("/");
 };
 export const startGithubLogin = (req, res) => {
@@ -123,7 +123,7 @@ export const finishGithubLogin = async (req, res) => {
       });
     }
     req.session.loggedIn = true;
-    res.session.user = user;
+    req.session.user = user;
     return res.redirect("/");
   } else {
     return res.redirect("login");
