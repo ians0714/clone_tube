@@ -1,7 +1,7 @@
 import User from "../models/User";
 import bcrypt from "bcrypt";
 import fetch from "node-fetch";
-
+//Join
 export const getJoin = (req, res) => {
   return res.render("join", { pageTitle: "Join" });
 };
@@ -36,8 +36,7 @@ export const postJoin = async (req, res) => {
     });
   }
 };
-export const edit = (req, res) => res.send("Edit User");
-export const deleteUser = (req, res) => res.send("Delete User");
+//Login
 export const getLogin = (req, res) => {
   return res.render("login", { pageTitle: "Login" });
 };
@@ -61,6 +60,7 @@ export const postLogin = async (req, res) => {
   req.session.user = user;
   return res.redirect("/");
 };
+//Social Login
 export const startGithubLogin = (req, res) => {
   const config = {
     client_id: process.env.GH_CLIENT,
@@ -129,8 +129,36 @@ export const finishGithubLogin = async (req, res) => {
     return res.redirect("login");
   }
 };
+//Logout
 export const logout = (req, res) => {
   req.session.destroy();
   return res.redirect("/");
 };
+//edit
+export const getEdit = (req, res) => {
+  return res.render("edit-profile", {
+    pageTitle: `Edit profile`,
+  });
+};
+export const postEdit = async (req, res) => {
+  const {
+    session: {
+      user: { _id },
+    },
+    body: { email, username, name, location },
+  } = req;
+  const updatedUser = await User.findByIdAndUpdate(
+    _id,
+    {
+      username,
+      name,
+      email,
+      location,
+    },
+    { new: true }
+  );
+  req.session.user = updatedUser;
+  return res.redirect("/users/edit");
+};
+export const deleteUser = (req, res) => res.send("Delete User");
 export const see = (req, res) => res.send("See");

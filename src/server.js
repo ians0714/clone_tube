@@ -4,7 +4,7 @@ import session from "express-session";
 import userRouter from "./routers/userRouter";
 import videoRouter from "./routers/videoRouter";
 import rootRouter from "./routers/rootRouter";
-import { localsMiddleware } from "./middlewares";
+import { localsMiddleware, protectorMiddleware } from "./middlewares";
 import MongoStore from "connect-mongo";
 
 const app = express();
