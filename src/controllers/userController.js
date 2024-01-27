@@ -1,5 +1,6 @@
 import User from "../models/User";
 import bcrypt from "bcrypt";
+import fetch from "node-fetch";
 
 export const getJoin = (req, res) => {
   return res.render("join", { pageTitle: "Join" });
@@ -42,7 +43,7 @@ export const getLogin = (req, res) => {
 };
 export const postLogin = async (req, res) => {
   const { username, password } = req.body;
-  const user = await User.findOne({ username });
+  const user = await User.findOne({ username, socialOnly: false });
   if (!user) {
     return res.status(400).render("/login", {
       pageTitle: "Login",
@@ -60,5 +61,76 @@ export const postLogin = async (req, res) => {
   res.session.user = user;
   return res.redirect("/");
 };
-export const logout = (req, res) => res.send("Log out");
+export const startGithubLogin = (req, res) => {
+  const config = {
+    client_id: process.env.GH_CLIENT,
+    allow_signup: false,
+    scope: "read:user read:email",
+  };
+  const baseUrl = "https://github.com/login/oath/authorize";
+  const params = new URLSearchParams(config).toString();
+  const finalUrl = `${baseUrl}?${params}`;
+  return res.redirect(finalUrl);
+};
+export const finishGithubLogin = async (req, res) => {
+  const baseUrl = "https://github.com/login/oath/authorize";
+  const config = {
+    client_id: process.env.GH_CLIENT,
+    client_secret: CLIENT_SECRET,
+    code: req.query.code,
+  };
+  const params = new URLSearchParams(config).toString();
+  const finalUrl = `${baseUrl}?${params}`;
+  const tokenRequest = await (
+    await fetch(finalUrl, {
+      method: "POST",
+      headers: "application/json",
+    })
+  ).json();
+  if ("access_token" in tokenRequest) {
+    const { access_token } = tokenRequest;
+    const apiURL = "https://api.github.com";
+    const userData = await (
+      await fetch(`${apiURL}/user`, {
+        headers: {
+          Authorization: `token ${access_token}`,
+        },
+      })
+    ).json();
+    const emailData = await (
+      await fetch(`${apiURL}/user/emails`, {
+        headers: {
+          Authorization: `token ${access_token}`,
+        },
+      })
+    ).json();
+    const emailObj = emailData.find(
+      (email) => email.primary === true && email.verified == true
+    );
+    if (!emailObj) {
+      return res.redirect("login");
+    }
+    let user = await User.findOne({ email: emailObj.email });
+    if (!user) {
+      user = await User.create({
+        avatarUrl: userData.avatar_url,
+        email: emailObj.email,
+        username: userData.login,
+        password: "",
+        socialOnly: true,
+        name: userData.name,
+        location: userData.location,
+      });
+    }
+    req.session.loggedIn = true;
+    res.session.user = user;
+    return res.redirect("/");
+  } else {
+    return res.redirect("login");
+  }
+};
+export const logout = (req, res) => {
+  req.session.destroy();
+  return res.redirect("/");
+};
 export const see = (req, res) => res.send("See");
