@@ -116,11 +116,11 @@ export const finishGithubLogin = async (req, res) => {
     if (!user) {
       user = await User.create({
         avatarUrl: userData.avatar_url,
-        email: emailObj.email,
+        name: userData.name,
         username: userData.login,
+        email: emailObj.email,
         password: "",
         socialOnly: true,
-        name: userData.name,
         location: userData.location,
       });
     }
@@ -128,7 +128,7 @@ export const finishGithubLogin = async (req, res) => {
     req.session.user = user;
     return res.redirect("/");
   } else {
-    return res.redirect("login");
+    return res.redirect("/login");
   }
 };
 //Logout

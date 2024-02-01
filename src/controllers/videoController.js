@@ -2,12 +2,8 @@ import Video from "../models/Video";
 import User from "../models/User";
 
 export const home = async (req, res) => {
-  try {
-    const videos = await Video.find({}).sort({ createdAt: "desc" });
-    return res.render("home", { pageTitle: "Home", videos });
-  } catch {
-    res.render("Server Error");
-  }
+  const videos = await Video.find({}).sort({ createdAt: "desc" });
+  return res.render("home", { pageTitle: "Home", videos });
 };
 export const see = async (req, res) => {
   const { id } = req.params;
