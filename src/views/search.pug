@@ -8,7 +8,7 @@ block content
             i.fas.fa-search
 
     div.video-grid
-        each video in user.videos 
+        each video in videos
             +video(video)
         else 
             span.empty__message Nothing
