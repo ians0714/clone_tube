@@ -113,3 +113,15 @@ export const deleteVideo = async (req, res) => {
     return res.status(404).render("404", { pageTitle: "Video can't delete" });
   }
 };
+
+export const registerView = async (req, res) => {
+  const { id } = req.params;
+  const video = await Video.findById(id);
+  if(video){
+    video.meta.views = video.meta.views + 1;
+    await video.save();
+    return res.sendStatus(200);
+  } else {
+    return res.sendStatus(404);
+  }
+}
