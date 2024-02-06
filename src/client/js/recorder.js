@@ -11,6 +11,11 @@ const handleDownload = () => {
     a.download = "MyRecording.webm";
     document.body.appendChild(a);
     a.click();
+    const tracks = stream.getTracks();
+    tracks.forEach((track) => {
+        track.stop();
+    });
+    stream = null;
 }
 
 const handleStop = () => {
