@@ -1,6 +1,5 @@
 import express from "express";
 import {
-  deleteUser,
   getEdit,
   postEdit,
   logout,
@@ -23,7 +22,6 @@ userRouter
   .all(protectorMiddleware)
   .get(getEdit)
   .post(avatarUpload.single("avatar"), postEdit);
-userRouter.get("/delete", protectorMiddleware, deleteUser);
 userRouter.get("/logout", protectorMiddleware, logout);
 userRouter.get("/github/start", publicOnlyMiddleware, startGithubLogin);
 userRouter.get("/github/finish", publicOnlyMiddleware, finishGithubLogin);

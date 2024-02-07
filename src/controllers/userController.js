@@ -164,7 +164,7 @@ export const postEdit = async (req, res) => {
   req.session.user = updatedUser;
   return res.redirect("/users/edit");
 };
-//Code CHal
+
 export const getChangePassword = (req, res) => {
   if (req.session.user.socialOnly) {
     req.flash("error", "Can't Change Password");
@@ -200,7 +200,6 @@ export const postChangePassword = async (req, res) => {
   return res.redirect("/users/logout");
 };
 
-export const deleteUser = (req, res) => res.send("Delete User");
 export const see = async (req, res) => {
   const { id } = req.params;
   const user = await User.findById(id).populate({
